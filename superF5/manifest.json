@@ -1,0 +1,22 @@
+{
+    "manifest_version": 2,
+    "name": "superF5",
+    "version": "1.0",
+  
+    "description": "Automatically refresh a page with customizable options",
+    "homepage_url": "https://github.com/campopenedo/",
+    "icons": {
+      "48": "icons/borrder-48.png"
+    },
+  
+    "permissions": [
+      "activeTab"
+    ],
+  
+    "browser_action": {
+      "default_icon": "icons/beasts-32.png",
+      "default_title": "superF5",
+      "default_popup": "popup/superF5.html"
+    }
+}
+  
