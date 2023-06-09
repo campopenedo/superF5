@@ -1,0 +1,46 @@
+:root {
+    --header-background: #0071FF;
+    --header-color: #fff;
+}
+
+header {
+    width: 100vw;
+    background-color: var(--header-background);
+    padding-bottom: 1vh;
+    color: var(--header-color);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+header h1 {
+    margin: 0px;
+}
+
+header p {
+    font-style: italic;
+    margin: 0px;
+}
+
+header p::before {
+    content: "\"";
+    font-weight: 500;
+    font-size: 3.5vw;
+}
+
+header p::after {
+    content: "\"";
+    font-weight: 500;
+    font-size: 3.5vw;
+}
+
+
+body {
+    margin: 0px;
+    padding-top: 0px;
+}
+
+form {
+    margin: 10px;
+}
