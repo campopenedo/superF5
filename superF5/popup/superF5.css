@@ -1,0 +1,107 @@
+:root {
+    --header-background: #0071FF;
+    --white: #fff;
+    --warning: #dc143c;
+    --warning-borders: #ffc0cb;
+    --sub-settings-width: 399.3px;
+    --sub-settings-margin: 0px 0px 0px 25px;
+}
+
+header {
+    width: 100vw;
+    background-color: var(--header-background);
+    padding-bottom: 1vh;
+    color: var(--white);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+header h1 {
+    margin: 0px;
+}
+
+header p {
+    font-style: italic;
+    margin: 0px;
+}
+
+header p::before {
+    content: "\"";
+    font-weight: 500;
+    font-size: 3.5vw;
+}
+
+header p::after {
+    content: "\"";
+    font-weight: 500;
+    font-size: 3.5vw;
+}
+
+
+body {
+    margin: 0px;
+    padding-top: 0px;
+}
+
+form {
+    margin: 10px;
+}
+
+.hidden {
+    display: none;
+}
+
+.closed {
+    animation-name: smoothDissappear;
+    animation-duration: 1s;
+}
+
+.select-info {
+    background-color: var(--warning);
+    color: var(--white);
+    border: 2px solid var(--warning-borders);
+    font-style: italic;
+    text-align: center;
+    margin: var(--sub-settings-margin);
+    padding: 0px 10px;
+    width: var(--sub-settings-width);
+    
+}
+
+.specific-content-selected {
+    margin: 0px;
+    padding: 0px;
+    margin: var(--sub-settings-margin);
+    font-style: italic;
+    text-align: center;
+    width: var(--sub-settings-width);
+}
+
+.visible {
+    animation-name: smoothAppear;
+    animation-duration: 1s;
+}
+
+@keyframes smoothAppear {
+    from {
+        opacity: 0%;
+        height: 0px;
+    }
+    to {
+        opacity: 100%;
+        height: 22px;
+    }
+}
+
+@keyframes smoothDissappear {
+    from {
+        opacity: 100%;
+        height: 22px;
+    }
+    to {
+        opacity: 0%;
+        height: 0px;
+    }
+}

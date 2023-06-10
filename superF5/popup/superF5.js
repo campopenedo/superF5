@@ -3,7 +3,8 @@ let programStatus = {
     firstRefresh: true,
     firstBody: "",
     currentBody: "",
-    stopRefresh: false
+    stopRefresh: false,
+    seekSpecificContent: false
 },
 programSettings = {
     secondsOfRefreshing: 0,
@@ -14,12 +15,27 @@ document.getElementById("start-refreshing").addEventListener("click", (e) => {
     e.preventDefault();
     getSettings();
     document.getElementById("start-refreshing").setAttribute("disabled", "disabled");
-    browser.runtime.sendMessage({ type: "refresh" });
+    browser.runtime.sendMessage({type: "refresh"});
 });
 
 document.getElementById("stop-refreshing").addEventListener("click", (e) => {
     e.preventDefault();
     programStatus.stopRefresh = true;
+});
+
+document.getElementById("stop-refresh-specific-changes").addEventListener("change", (e) => {
+    let contentSelectedInfo = document.getElementById("specific-content-selected"),
+        howToSelect = document.getElementById("how-to-select");
+    if(e.target.checked && !programStatus.seekSpecificContent) {
+        programStatus.seekSpecificContent = true;
+
+        contentSelectedInfo.innerText = "There is no element selected.";
+        contentSelectedInfo.classList.remove("hidden");
+        contentSelectedInfo.classList.add("visible");
+
+        howToSelect.classList.remove("hidden");
+        howToSelect.classList.add("visible");
+    }
 });
 
 browser.runtime.onMessage.addListener((message) => {

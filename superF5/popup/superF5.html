@@ -19,7 +19,7 @@
                 seconds (0 refresh when the DOM is loaded)
             </p>
             <label>
-                <input type="checkbox" id="dont-wait-dom" />
+                <input type="radio" id="dont-wait-dom" name="settings" />
                 Don't wait for compare the page
             </label>
         </section>
@@ -27,13 +27,15 @@
             <section id="custom-refresh">
                 <section id="seek-full-web">
                     <label>
-                        <input type="checkbox" id="stop-refresh-any-changes" /> Stop refresing when the web changes
+                        <input type="radio" id="stop-refresh-any-changes" name="settings" /> Stop refresing when the web changes
                     </label>
                 </section>
                 <section id="seek-especific-content">
                     <label>
-                        <input type="checkbox" id="stop-refresh-specific-changes" /> Stop refresing when an specific part of the web changes (select the part on the web)
+                        <input type="radio" id="stop-refresh-specific-changes" name="settings" /> Stop refresing when an specific part of the web changes 
                     </label>
+                    <p id="how-to-select" class="hidden select-info">Select the part of the web clicking on it</p>
+                    <p id="specific-content-selected" class="hidden specific-content-selected"></p>
                 </section>
             </section>
             <label>
