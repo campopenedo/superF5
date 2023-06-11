@@ -5,4 +5,15 @@ browser.runtime.onMessage.addListener((message) => {
       refresh = true;
     });
   }
+
+  if (message.type === "selectPartOfWeb") {
+    browser.tabs.query({active: true, currentWindow: true}, (tabs) => {
+      browser.tabs.sendMessage(tabs[0].id, {type: "selectPartOfWeb"});
+    });
+  }
+  if (message.type === "returnPartSelected") {
+    browser.tabs.query({active: true, currentWindow: true}, (tabs) => {
+      browser.tabs.sendMessage(tabs[0].id, {type: "returnPartSelected"});
+    });
+  }
 });

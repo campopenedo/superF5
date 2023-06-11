@@ -4,7 +4,8 @@ let programStatus = {
     firstBody: "",
     currentBody: "",
     stopRefresh: false,
-    seekSpecificContent: false
+    seekSpecificContent: false,
+    specificContent: ""
 },
 programSettings = {
     secondsOfRefreshing: 0,
@@ -35,6 +36,8 @@ document.getElementById("stop-refresh-specific-changes").addEventListener("chang
 
         howToSelect.classList.remove("hidden");
         howToSelect.classList.add("visible");
+        browser.runtime.sendMessage({type: "selectPartOfWeb"});
+        document.addEventListener("keydown", getSpecificContent);
     }
 });
 
@@ -59,6 +62,14 @@ browser.runtime.onMessage.addListener((message) => {
     if (programStatus.stopRefresh) {
         restoreDefault();
     }
+
+    if(message.type === "part_selected") {
+        let selectedContentAdvise = document.getElementById("specific-content-selected");
+        programSettings.specificContent = message.payload;
+        selectedContentAdvise.innerText = "Element selected.";
+        selectedContentAdvise.classList.add("content-selected");
+        document.getElementById("how-to-select").classList.add("hidden");
+    }
 });
 
 function restoreDefault() {
@@ -82,4 +93,12 @@ function getSettings() {
     programSettings.secondsOfRefreshing = parseInt(seconds);
 
     programSettings.comparePages = document.getElementById("dont-wait-dom").checked;
+}
+
+function getSpecificContent(keyForAccept) {
+    if(keyForAccept.key === " ") {
+        browser.runtime.sendMessage({type: "returnPartSelected"});
+        programStatus.seekSpecificContent = false;
+        document.removeEventListener("keydown", getSpecificContent);
+    }
 }

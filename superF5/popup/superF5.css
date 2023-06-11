@@ -5,6 +5,8 @@
     --warning-borders: #ffc0cb;
     --sub-settings-width: 399.3px;
     --sub-settings-margin: 0px 0px 0px 25px;
+    --success: #8DC356;
+    --success-border: 1px solid #808080;
 }
 
 header {
@@ -43,6 +45,7 @@ header p::after {
 body {
     margin: 0px;
     padding-top: 0px;
+    overflow-y: hidden;
 }
 
 form {
@@ -55,7 +58,7 @@ form {
 
 .closed {
     animation-name: smoothDissappear;
-    animation-duration: 1s;
+    animation-duration: .5s;
 }
 
 .select-info {
@@ -82,6 +85,12 @@ form {
 .visible {
     animation-name: smoothAppear;
     animation-duration: 1s;
+}
+
+.content-selected {
+    background-color: var(--success);
+    border: var(--success-border);
+    width: fit-content;
 }
 
 @keyframes smoothAppear {
