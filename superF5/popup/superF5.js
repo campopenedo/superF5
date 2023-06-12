@@ -25,19 +25,20 @@ document.getElementById("stop-refreshing").addEventListener("click", (e) => {
 });
 
 document.getElementById("stop-refresh-specific-changes").addEventListener("change", (e) => {
-    let contentSelectedInfo = document.getElementById("specific-content-selected"),
-        howToSelect = document.getElementById("how-to-select");
     if(e.target.checked && !programStatus.seekSpecificContent) {
-        programStatus.seekSpecificContent = true;
+        startSeekSpecificContent();
+    }
+});
 
-        contentSelectedInfo.innerText = "There is no element selected.";
-        contentSelectedInfo.classList.remove("hidden");
-        contentSelectedInfo.classList.add("visible");
+document.getElementById("stop-refresh-any-changes").addEventListener("change", (e) => {
+    if(programStatus.seekSpecificContent || (!programStatus.seekSpecificContent && programStatus.specificContent.length > 0)) {
+        exitSeekSpecificContent();
+    }
+});
 
-        howToSelect.classList.remove("hidden");
-        howToSelect.classList.add("visible");
-        browser.runtime.sendMessage({type: "selectPartOfWeb"});
-        document.addEventListener("keydown", getSpecificContent);
+document.getElementById("dont-wait-dom").addEventListener("change", (e) => {
+    if(programStatus.seekSpecificContent || (!programStatus.seekSpecificContent && programStatus.specificContent.length > 0)) {
+        exitSeekSpecificContent();
     }
 });
 
@@ -69,6 +70,7 @@ browser.runtime.onMessage.addListener((message) => {
         selectedContentAdvise.innerText = "Element selected.";
         selectedContentAdvise.classList.add("content-selected");
         document.getElementById("how-to-select").classList.add("hidden");
+        programStatus.specificContent = message.payload;
     }
 });
 
@@ -101,4 +103,38 @@ function getSpecificContent(keyForAccept) {
         programStatus.seekSpecificContent = false;
         document.removeEventListener("keydown", getSpecificContent);
     }
+}
+
+function exitSeekSpecificContent() {
+    let contentSelectedInfo = document.getElementById("specific-content-selected"),
+    howToSelect = document.getElementById("how-to-select");
+    programStatus.seekSpecificContent = false;
+    programSettings.specificContent = "";
+
+    contentSelectedInfo.classList.remove("visible");
+    if(contentSelectedInfo.classList.contains("content-selected")) {
+        contentSelectedInfo.classList.remove("content-selected")
+    }
+    contentSelectedInfo.classList.add("hidden");
+
+    howToSelect.classList.remove("visible");
+    howToSelect.classList.add("hidden");
+
+    browser.runtime.sendMessage({type: "stopSelectPartOfWeb"});
+    document.removeEventListener("keydown", getSpecificContent);
+}
+
+function startSeekSpecificContent() {
+    programStatus.seekSpecificContent = true;
+    let contentSelectedInfo = document.getElementById("specific-content-selected"),
+    howToSelect = document.getElementById("how-to-select");
+
+    contentSelectedInfo.innerText = "There is no element selected.";
+    contentSelectedInfo.classList.remove("hidden");
+    contentSelectedInfo.classList.add("visible");
+
+    howToSelect.classList.remove("hidden");
+    howToSelect.classList.add("visible");
+    browser.runtime.sendMessage({type: "selectPartOfWeb"});
+    document.addEventListener("keydown", getSpecificContent);
 }

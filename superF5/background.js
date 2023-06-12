@@ -11,6 +11,13 @@ browser.runtime.onMessage.addListener((message) => {
       browser.tabs.sendMessage(tabs[0].id, {type: "selectPartOfWeb"});
     });
   }
+
+  if (message.type === "stopSelectPartOfWeb") {
+    browser.tabs.query({active: true, currentWindow: true}, (tabs) => {
+      browser.tabs.sendMessage(tabs[0].id, {type: "stopSelectPartOfWeb"});
+    });
+  }
+
   if (message.type === "returnPartSelected") {
     browser.tabs.query({active: true, currentWindow: true}, (tabs) => {
       browser.tabs.sendMessage(tabs[0].id, {type: "returnPartSelected"});

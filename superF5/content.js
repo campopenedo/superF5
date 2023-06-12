@@ -19,6 +19,12 @@ browser.runtime.onMessage.addListener((message) => {
         document.addEventListener("mouseout", unselectPart);
     }
 
+    if(message.type === "stopSelectPartOfWeb") {
+        document.removeEventListener("mouseover", selectPart);
+        document.removeEventListener("mouseout", unselectPart);
+    }
+
+
     if(message.type === "returnPartSelected") {
         document.removeEventListener("mouseover", selectPart);
         document.removeEventListener("mouseout", unselectPart);
