@@ -5,11 +5,13 @@ let programStatus = {
     currentBody: "",
     stopRefresh: false,
     seekSpecificContent: false,
-    specificContent: ""
+    specificContent: "",
+    alarmSound: false
 },
 programSettings = {
     secondsOfRefreshing: 0,
-    dontWaitComparePages: false
+    dontWaitComparePages: false,
+    alarm:new Audio(browser.extension.getURL('audio/alarm.wav'))
 }
 
 document.getElementById("start-refreshing").addEventListener("click", (e) => {
@@ -54,10 +56,20 @@ browser.runtime.onMessage.addListener((message) => {
                     browser.runtime.sendMessage({ type: "refresh" });
                 }, (programSettings.secondsOfRefreshing * 1000));
             } else {
-                alert("different data");
+                if(programSettings.alarmSound) {
+                alarmSound();
+                alert("different data. Click Ok to stop alarm");
+                stopAlarmSound();
+                } else {
+                    alert("different data");
+                }
                 restoreDefault();
             }
         }
+    }
+    if(message.type === 'part_selected') {
+        programSettings.specificContent = message.payload;
+        alert("TODO: validate specific content.");
     }
 
     if (programStatus.stopRefresh) {
@@ -81,6 +93,7 @@ function restoreDefault() {
     programStatus.currentBody = "";
     programStatus.stopRefresh = false;
     document.getElementById("start-refreshing").removeAttribute("disabled");
+    programStatus.alarmSound = false;
 }
 
 function firstData(payload) {
@@ -95,6 +108,7 @@ function getSettings() {
     programSettings.secondsOfRefreshing = parseInt(seconds);
 
     programSettings.comparePages = document.getElementById("dont-wait-dom").checked;
+    programSettings.alarmSound = document.getElementById("alarm").checked;
 }
 
 function getSpecificContent(keyForAccept) {
@@ -137,4 +151,20 @@ function startSeekSpecificContent() {
     howToSelect.classList.add("visible");
     browser.runtime.sendMessage({type: "selectPartOfWeb"});
     document.addEventListener("keydown", getSpecificContent);
+}
+
+function alarmSound() {
+    programSettings.alarm.play();
+    programSettings.alarm.addEventListener("ended", extendedSound);
+}
+
+function extendedSound() {
+    programSettings.alarm.play();
+    programSettings.alarm.currentTime = 0;
+}
+
+function stopAlarmSound() {
+    programSettings.alarm.currentTime = 0;
+    programSettings.alarm.removeEventListener("ended", extendedSound);
+    programSettings.alarm.pause();
 }
