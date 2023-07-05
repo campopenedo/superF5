@@ -1,3 +1,6 @@
+//TODO: quitar la clase superF5-extension-selection si quita la opción de seleccionar(envar mensaje a content.js)
+//TODO: refresh without first refresh to get first data
+
 let programStatus = {
     refresh: false,
     firstRefresh: true,
@@ -18,7 +21,11 @@ document.getElementById("start-refreshing").addEventListener("click", (e) => {
     e.preventDefault();
     getSettings();
     document.getElementById("start-refreshing").setAttribute("disabled", "disabled");
-    browser.runtime.sendMessage({type: "refresh"});
+    if(!programStatus.seekSpecificContent) {
+        browser.runtime.sendMessage({type: "refresh"});
+    } else {
+        browser.runtime.sendMessage({type: "refresh_send_specific"})
+    }
 });
 
 document.getElementById("stop-refreshing").addEventListener("click", (e) => {
@@ -67,16 +74,13 @@ browser.runtime.onMessage.addListener((message) => {
             }
         }
     }
-    if(message.type === 'part_selected') {
-        programSettings.specificContent = message.payload;
-        alert("TODO: validate specific content.");
-    }
 
     if (programStatus.stopRefresh) {
         restoreDefault();
     }
 
     if(message.type === "part_selected") {
+        alert("holamundo3333333")
         let selectedContentAdvise = document.getElementById("specific-content-selected");
         programSettings.specificContent = message.payload;
         selectedContentAdvise.innerText = "Element selected.";
@@ -94,6 +98,7 @@ function restoreDefault() {
     programStatus.stopRefresh = false;
     document.getElementById("start-refreshing").removeAttribute("disabled");
     programStatus.alarmSound = false;
+    programSettings.alarm.currentTime = 0;
 }
 
 function firstData(payload) {
@@ -164,7 +169,6 @@ function extendedSound() {
 }
 
 function stopAlarmSound() {
-    programSettings.alarm.currentTime = 0;
     programSettings.alarm.removeEventListener("ended", extendedSound);
     programSettings.alarm.pause();
 }
