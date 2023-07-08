@@ -43,16 +43,36 @@ browser.runtime.onMessage.addListener((message) => {
     }
     
     if(message.type === "refresh_send_specific") {
-        let sectionName = document.getElementsByClassName("superf5-extension-selection")[0].outerHTML.replace('<', '').split(' ')[0];
-        let sectionDOM = Array.from(document.getElementsByTagName(sectionName));
-        let DOMposition;
+        let selectedPart = document.getElementsByClassName("superf5-extension-selection")[0].outerHTML
+            ,sectionName = document.getElementsByClassName("superf5-extension-selection")[0].outerHTML.replace('<', '').split(' ')[0]
+            ,sectionDOM = Array.from(document.getElementsByTagName(sectionName))
+            ,DOMposition,
+            sectionId,
+            sectionClass;
+
         for(let x = 0; x < sectionDOM.length; x++) {
             if(sectionDOM[x].classList.contains("superf5-extension-selection")) {
                 DOMposition = x;
-                x = sectionDOM.length;
+                sectionId = document.getElementsByClassName("superf5-extension-selection")[0].id;
+                sectionClass = document.getElementsByClassName("superf5-extension-selection")[0].classList;
+                sectionClass.remove("superf5-extension-selection");
+                break;
             }
         }
 
+        let result = {
+            "selectedPart": selectedPart,
+            "DOMposition": DOMposition,
+            "sectionName": sectionName,
+            "sectionId": sectionId,
+            "sectionClass": sendIfIsSectionClassUnique(sectionClass)
+        }
+
+        let message = {
+            type: "specific_part_selected",
+            payload: result
+        };
+        browser.runtime.sendMessage(message);
         //TODO: send the selected part, the DOM position and the sectionName to superF5.js for verify and upload
     }
 });
@@ -60,8 +80,18 @@ browser.runtime.onMessage.addListener((message) => {
 function selectPart(content) {
     content.target.style.border = "1px solid red";
     sendedPartOfWeb = content.target;
+    content.target.classList.add("superf5-extension-selection");
 }
 
 function unselectPart(content) {
     content.target.style.border = "";
+}
+
+function sendIfIsSectionClassUnique(sectionClass) {
+    let classes =sectionClass.toString();
+    if(document.getElementsByClassName(sectionClass).length > 1) {
+        return '';
+    } else {
+        return classes;
+    }
 }

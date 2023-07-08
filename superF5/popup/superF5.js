@@ -21,10 +21,10 @@ document.getElementById("start-refreshing").addEventListener("click", (e) => {
     e.preventDefault();
     getSettings();
     document.getElementById("start-refreshing").setAttribute("disabled", "disabled");
-    if(!programStatus.seekSpecificContent) {
-        browser.runtime.sendMessage({type: "refresh"});
-    } else {
+    if(document.getElementById("stop-refresh-specific-changes").checked) {
         browser.runtime.sendMessage({type: "refresh_send_specific"})
+    } else {
+        browser.runtime.sendMessage({type: "refresh"});
     }
 });
 
@@ -75,13 +75,17 @@ browser.runtime.onMessage.addListener((message) => {
         }
     }
 
+    if(message.type === "specific_part_selected" && !programStatus.stopRefresh) {
+        //TODO: save specific part selected data, see if we can compare with ids or classes, and if not, compare with DOM.
+        //maybe advertise the user that this is unestable, and if they can catch another to see if they have unique id or classes
+    }
+
     if (programStatus.stopRefresh) {
         restoreDefault();
     }
 
     if(message.type === "part_selected") {
-        alert("holamundo3333333")
-        let selectedContentAdvise = document.getElementById("specific-content-selected");
+         let selectedContentAdvise = document.getElementById("specific-content-selected");
         programSettings.specificContent = message.payload;
         selectedContentAdvise.innerText = "Element selected.";
         selectedContentAdvise.classList.add("content-selected");
