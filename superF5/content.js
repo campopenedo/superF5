@@ -73,7 +73,6 @@ browser.runtime.onMessage.addListener((message) => {
             payload: result
         };
         browser.runtime.sendMessage(message);
-        //TODO: send the selected part, the DOM position and the sectionName to superF5.js for verify and upload
     }
 });
 

@@ -1,5 +1,5 @@
 :root {
-    --header-background: #0071FF;
+    --blueBackground: #0071FF;
     --white: #fff;
     --warning: #dc143c;
     --warning-borders: #ffc0cb;
@@ -7,11 +7,13 @@
     --sub-settings-margin: 0px 0px 0px 25px;
     --success: #8DC356;
     --success-border: 1px solid #808080;
+    --orangeLetters: #ff8e00;
+    --violetBackground: #8e00ff;
 }
 
 header {
     width: 100vw;
-    background-color: var(--header-background);
+    background-color: var(--blueBackground);
     padding-bottom: 1vh;
     color: var(--white);
     display: flex;
@@ -91,6 +93,28 @@ form {
     background-color: var(--success);
     border: var(--success-border);
     width: fit-content;
+}
+
+#refresh-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 3vw;
+}
+
+
+#start-refreshing, #stop-refreshing {
+    border: 2px solid black;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    background-color: var(--blueBackground);
+    color: var(--white)
+}
+
+#start-refreshing:hover, #stop-refreshing:hover {
+    color: var(--orangeLetters);
+    background-color: var(--violetBackground);
+    text-shadow: black 1px 2px;
 }
 
 @keyframes smoothAppear {
