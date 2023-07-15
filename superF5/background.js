@@ -26,7 +26,7 @@ browser.runtime.onMessage.addListener((message) => {
 
   if (message.type === "refresh_send_specific") {
     browser.tabs.query({active: true, currentWindow: true}, (tabs) => {
-      browser.tabs.sendMessage(tabs[0].id, {type: "refresh_send_specific"});
+      browser.tabs.sendMessage(tabs[0].id, {type: "refresh_send_specific", payload: { sectionId: message.payload }});
     });
   }
 });

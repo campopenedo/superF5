@@ -29,50 +29,25 @@ browser.runtime.onMessage.addListener((message) => {
         document.removeEventListener("mouseover", selectPart);
         document.removeEventListener("mouseout", unselectPart);
 
-        //TODO: put this on another function
-        sendedPartOfWeb.classList.add("superF5-extension-selection");
-        let sectionName = document.getElementsByClassName("superF5-extension-selection")[0].outerHTML.replace('<', '').split(' ')[0];
-        
-
-
+        let result = sendSpecificContent();
         let message = {
             type: "part_selected",
-            payload: sendedPartOfWeb.outerHTML
+            payload: result
         };
         browser.runtime.sendMessage(message);
     }
     
     if(message.type === "refresh_send_specific") {
-        let selectedPart = document.getElementsByClassName("superf5-extension-selection")[0].outerHTML
-            ,sectionName = document.getElementsByClassName("superf5-extension-selection")[0].outerHTML.replace('<', '').split(' ')[0]
-            ,sectionDOM = Array.from(document.getElementsByTagName(sectionName))
-            ,DOMposition,
-            sectionId,
-            sectionClass;
-
-        for(let x = 0; x < sectionDOM.length; x++) {
-            if(sectionDOM[x].classList.contains("superf5-extension-selection")) {
-                DOMposition = x;
-                sectionId = document.getElementsByClassName("superf5-extension-selection")[0].id;
-                sectionClass = document.getElementsByClassName("superf5-extension-selection")[0].classList;
-                sectionClass.remove("superf5-extension-selection");
-                break;
-            }
+        let result;
+        if(message.payload.sectionId !== undefined) {
+            result = document.getElementById(message.payload.sectionId).outerHTML
         }
 
-        let result = {
-            "selectedPart": selectedPart,
-            "DOMposition": DOMposition,
-            "sectionName": sectionName,
-            "sectionId": sectionId,
-            "sectionClass": sendIfIsSectionClassUnique(sectionClass)
-        }
-
-        let message = {
+        let messageSender = {
             type: "specific_part_selected",
             payload: result
         };
-        browser.runtime.sendMessage(message);
+        browser.runtime.sendMessage(messageSender);
     }
 });
 
@@ -84,6 +59,7 @@ function selectPart(content) {
 
 function unselectPart(content) {
     content.target.style.border = "";
+    content.target.classList.remove("superf5-extension-selection");
 }
 
 function sendIfIsSectionClassUnique(sectionClass) {
@@ -93,4 +69,33 @@ function sendIfIsSectionClassUnique(sectionClass) {
     } else {
         return classes;
     }
+}
+
+function sendSpecificContent() {
+    let selectedPart = document.getElementsByClassName("superf5-extension-selection")[0].outerHTML
+    ,sectionName = document.getElementsByClassName("superf5-extension-selection")[0].outerHTML.replace('<', '').split(' ')[0]
+    ,sectionDOM = Array.from(document.getElementsByTagName(sectionName))
+    ,DOMposition,
+    sectionId,
+    sectionClass;
+
+    for(let x = 0; x < sectionDOM.length; x++) {
+        if(sectionDOM[x].classList.contains("superf5-extension-selection")) {
+            DOMposition = x;
+            sectionId = document.getElementsByClassName("superf5-extension-selection")[0].id;
+            sectionClass = document.getElementsByClassName("superf5-extension-selection")[0].classList;
+            sectionClass.remove("superf5-extension-selection");
+            break;
+        }
+    }
+
+    let specificContentInfo = {
+        "selectedPart": selectedPart,
+        "DOMposition": DOMposition,
+        "sectionName": sectionName,
+        "sectionId": sectionId,
+        "sectionClass": sendIfIsSectionClassUnique(sectionClass)
+    }
+
+    return JSON.stringify(specificContentInfo);
 }

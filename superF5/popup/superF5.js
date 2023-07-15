@@ -1,4 +1,3 @@
-//TODO: quitar la clase superF5-extension-selection si quita la opción de seleccionar(envar mensaje a content.js)
 //TODO: refresh without first refresh to get first data
 
 let programStatus = {
@@ -74,23 +73,35 @@ browser.runtime.onMessage.addListener((message) => {
             }
         }
     }
-
-    if(message.type === "specific_part_selected" && !programStatus.stopRefresh) {
+    else if(message.type === "specific_part_selected" && !programStatus.stopRefresh) {
         //TODO: save specific part selected data, see if we can compare with ids or classes, and if not, compare with DOM.
-        //maybe advertise the user that this is unestable, and if they can catch another to see if they have unique id or classes
+        if(programStatus.specificContent.sectionId !== "") {
+            setTimeout(() => {
+                browser.runtime.sendMessage({ type: "refresh_send_specific", payload: programStatus.specificContent.sectionId});
+            }, (programSettings.secondsOfRefreshing * 1000));
+            return;
+        }
+
+        if(programStatus.specificContent.sectionClass !== "") {
+            console.log("unique class")
+            return;
+        }
     }
 
-    if (programStatus.stopRefresh) {
-        restoreDefault();
-    }
-
-    if(message.type === "part_selected") {
-         let selectedContentAdvise = document.getElementById("specific-content-selected");
-        programSettings.specificContent = message.payload;
+    else if(message.type === "part_selected" && !programStatus.stopRefresh) {
+        let selectedContentAdvise = document.getElementById("specific-content-selected");
+        programStatus.specificContent = JSON.parse(message.payload);
         selectedContentAdvise.innerText = "Element selected.";
         selectedContentAdvise.classList.add("content-selected");
         document.getElementById("how-to-select").classList.add("hidden");
-        programStatus.specificContent = message.payload;
+
+        if(programStatus.specificContent.sectionId === "" && programStatus.specificContent.sectionClass === "") {
+            alert("The section you choose may have difficulties to analize(is rare, but it can happen), if you can, choose another");
+        }
+    }
+
+    else if (programStatus.stopRefresh) {
+        restoreDefault();
     }
 });
 
