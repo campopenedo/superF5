@@ -8,7 +8,7 @@
     --success: #8DC356;
     --success-border: 1px solid #808080;
     --orangeLetters: #ff8e00;
-    --violetBackground: #8e00ff;
+    --darkBlueBackground: #004daa;
 }
 
 header {
@@ -112,9 +112,8 @@ form {
 }
 
 #start-refreshing:hover, #stop-refreshing:hover {
-    color: var(--orangeLetters);
-    background-color: var(--violetBackground);
-    text-shadow: black 1px 2px;
+    background-color: var(--darkBlueBackground);
+    text-shadow: black 1px 1px;
 }
 
 @keyframes smoothAppear {
