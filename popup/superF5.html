@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="superF5.css"> 
+    <title>SuperF5</title>
+</head>
+<body>
+    <header>
+        <h1>SuperF5</h1>
+        <p>When F5 is not enought</p>
+    </header>
+    <form>
+        <section id="simple-refresh">
+            <p>Refresh every 
+                <input type="number" id="refresh-seconds" name="refresh-seconds" min="0" value="1"> 
+                seconds (0 refresh when the DOM is loaded)
+            </p>
+            <label>
+                <input type="radio" id="dont-wait-dom" name="settings" />
+                Don't wait for compare the page
+            </label>
+        </section>
+        <section id="advanced-options">
+            <section id="custom-refresh">
+                <section id="seek-full-web">
+                    <label>
+                        <input type="radio" id="stop-refresh-any-changes" name="settings" /> Stop refresing when the web changes
+                    </label>
+                </section>
+                <section id="seek-especific-content">
+                    <label>
+                        <input type="radio" id="stop-refresh-specific-changes" name="settings" /> Stop refresing when an specific part of the web changes 
+                    </label>
+                    <p id="how-to-select" class="hidden select-info">Put the mouse over and press space to select</p>
+                    <p id="specific-content-selected" class="hidden specific-content-selected"></p>
+                </section>
+            </section>
+            <label>
+                <input type="checkbox" id="alarm" /> Set an alarm
+            </label>
+        </section>
+        <section id="refresh-buttons">
+            <button type="submit" id="start-refreshing">Start refreshing</button>
+            <button type="submit" id="stop-refreshing">Stop refreshing</button>
+        </section>
+    </form>
+    <script src="superF5.js"></script>
+</body>
+</html>

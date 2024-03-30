@@ -1,0 +1,140 @@
+:root {
+    --blueBackground: #0071FF;
+    --white: #fff;
+    --warning: #dc143c;
+    --warning-borders: #ffc0cb;
+    --sub-settings-width: 399.3px;
+    --sub-settings-margin: 0px 0px 0px 25px;
+    --success: #8DC356;
+    --success-border: 1px solid #808080;
+    --orangeLetters: #ff8e00;
+    --violetBackground: #8e00ff;
+}
+
+header {
+    width: 100vw;
+    background-color: var(--blueBackground);
+    padding-bottom: 1vh;
+    color: var(--white);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+header h1 {
+    margin: 0px;
+}
+
+header p {
+    font-style: italic;
+    margin: 0px;
+}
+
+header p::before {
+    content: "\"";
+    font-weight: 500;
+    font-size: 3.5vw;
+}
+
+header p::after {
+    content: "\"";
+    font-weight: 500;
+    font-size: 3.5vw;
+}
+
+
+body {
+    margin: 0px;
+    padding-top: 0px;
+    overflow-y: hidden;
+}
+
+form {
+    margin: 10px;
+}
+
+.hidden {
+    display: none;
+}
+
+.closed {
+    animation-name: smoothDissappear;
+    animation-duration: .5s;
+}
+
+.select-info {
+    background-color: var(--warning);
+    color: var(--white);
+    border: 2px solid var(--warning-borders);
+    font-style: italic;
+    text-align: center;
+    margin: var(--sub-settings-margin);
+    padding: 0px 10px;
+    width: var(--sub-settings-width);
+    
+}
+
+.specific-content-selected {
+    margin: 0px;
+    padding: 0px;
+    margin: var(--sub-settings-margin);
+    font-style: italic;
+    text-align: center;
+    width: var(--sub-settings-width);
+}
+
+.visible {
+    animation-name: smoothAppear;
+    animation-duration: 1s;
+}
+
+.content-selected {
+    background-color: var(--success);
+    border: var(--success-border);
+    width: fit-content;
+}
+
+#refresh-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 3vw;
+}
+
+
+#start-refreshing, #stop-refreshing {
+    border: 2px solid black;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    background-color: var(--blueBackground);
+    color: var(--white)
+}
+
+#start-refreshing:hover, #stop-refreshing:hover {
+    color: var(--orangeLetters);
+    background-color: var(--violetBackground);
+    text-shadow: black 1px 2px;
+}
+
+@keyframes smoothAppear {
+    from {
+        opacity: 0%;
+        height: 0px;
+    }
+    to {
+        opacity: 100%;
+        height: 22px;
+    }
+}
+
+@keyframes smoothDissappear {
+    from {
+        opacity: 100%;
+        height: 22px;
+    }
+    to {
+        opacity: 0%;
+        height: 0px;
+    }
+}
