@@ -1,4 +1,12 @@
 browser.runtime.onMessage.addListener((message) => {
+  if (message.action === "refreshWhenPageIsComplete") {
+    //TODO: filter for addEventlistener (only the actual tab)
+    browser.webNavigation.onCompleted.addListener(sendRefreshWhenPageIsCompleteMessage);
+    messageToPage("reload");
+  }
+
+
+  //---------------------
   if (message.type === "refresh") {
     browser.tabs.query({active: true, currentWindow: true}, (tabs) => {
       browser.tabs.sendMessage(tabs[0].id, {type: "refresh"});
@@ -30,3 +38,13 @@ browser.runtime.onMessage.addListener((message) => {
     });
   }
 });
+
+function messageToPage(message) {
+  browser.tabs.query({active: true, currentWindow: true}, (tabs) => {browser.tabs.sendMessage(tabs[0].id, {type: message});});
+}
+
+function sendRefreshWhenPageIsCompleteMessage() {
+  browser.tabs.query({active: true, currentWindow: true}, (tabs) => {
+    browser.tabs.sendMessage(tabs[0].id, {type: "refreshWhenPageIsComplete"});
+  });
+}

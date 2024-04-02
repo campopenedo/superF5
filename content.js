@@ -1,6 +1,14 @@
 let sendedPartOfWeb;
 
 browser.runtime.onMessage.addListener((message) => {
+    if (message.type === "refreshWhenPageIsComplete") {
+        location.reload();
+    } else if(message.type === "reload") {
+        location.reload();
+    }
+
+    //---------
+
     if (message.type === "refresh") {
         const sendBody = new Promise((resolve) => {
             let message = {
@@ -98,4 +106,11 @@ function sendSpecificContent() {
     }
 
     return JSON.stringify(specificContentInfo);
+}
+
+function refreshPage() {
+    document.addEventListener("DOMContentLoaded", (e) => {
+        alert("pasa por aquí1358")
+    });
+    location.reload();
 }

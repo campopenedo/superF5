@@ -11,7 +11,8 @@
 
   "permissions": [
     "activeTab",
-    "scripting"
+    "scripting",
+    "webNavigation"
   ],
 
   "browser_action": {
