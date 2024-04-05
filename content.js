@@ -7,7 +7,7 @@ browser.runtime.onMessage.addListener((message) => {
         location.reload();
     }
 
-    //---------
+  //old escenarios - to delete - only for information purposes
 
     if (message.type === "refresh") {
         const sendBody = new Promise((resolve) => {
