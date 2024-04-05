@@ -1,12 +1,20 @@
-document.getElementById("start-refreshing").addEventListener("click", refreshingOptions);
-document.getElementById("stop-refreshing").addEventListener("click", stopAndClean);
-//TODO: dont stop when the app is close if the user press the refresh-in-background buttonºº
-window.addEventListener("unload", stopAndClean);
+document.getElementById("start-refreshing").addEventListener("click", (event) => {
+    event.preventDefault();
+    refreshingOptions();
+});
+
+document.getElementById("stop-refreshing").addEventListener("click", (event) => {
+    event.preventDefault();
+    sendStopAndClean();
+});
+
+window.addEventListener("unload", stopOptions);
+window.addEventListener("load", stopOptions);
+
 document.getElementById("refresh-seconds").addEventListener("click", toggleButtonsDisponibility);
 
 //Send messages to background.js
-function refreshingOptions(event) {
-    event.preventDefault();
+function refreshingOptions() {
     browser.runtime.sendMessage({action: "getTabInfo"});
 
     if(refreshWhenPageIsComplete()) {
@@ -14,7 +22,12 @@ function refreshingOptions(event) {
     }
 }
 
-function stopAndClean() {
+function stopOptions() {
+    let keepRefreshin = document.getElementById("refresh-in-background").checked;
+    if(!keepRefreshin) sendStopAndClean();
+}
+
+function sendStopAndClean() {
     browser.runtime.sendMessage({action: "stopAndClean"});
 }
 

@@ -116,6 +116,19 @@ form {
     text-shadow: black 1px 1px;
 }
 
+#aditional-options {
+    padding: 20px 0px;
+}
+
+#aditional-options label {
+    display: block;
+}
+
+#aditional-options label[for="refresh-in-background"] {
+    color: var(--warning);
+    font-weight: 600;
+}
+
 @keyframes smoothAppear {
     from {
         opacity: 0%;
