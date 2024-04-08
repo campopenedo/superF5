@@ -15,25 +15,23 @@ document.getElementById("refresh-seconds").addEventListener("click", toggleButto
 
 //Send messages to background.js
 function refreshingOptions() {
+    let secondsToRefresh = document.getElementById("refresh-seconds").value;
     browser.runtime.sendMessage({action: "getTabInfo"});
 
-    if(refreshWhenPageIsComplete()) {
+    if(secondsToRefresh == 0) {
         browser.runtime.sendMessage({action: "refreshWhenPageIsComplete"});
+    } else if (secondsToRefresh != 0) {
+        browser.runtime.sendMessage({action: "waitSecondsWhenCompleteToRefresh", seconds: secondsToRefresh});
     }
 }
 
 function stopOptions() {
-    let keepRefreshin = document.getElementById("refresh-in-background").checked;
-    if(!keepRefreshin) sendStopAndClean();
+    let keepRefreshing = document.getElementById("refresh-in-background").checked;
+    if(!keepRefreshing) sendStopAndClean();
 }
 
 function sendStopAndClean() {
     browser.runtime.sendMessage({action: "stopAndClean"});
-}
-
-//Helpers
-function refreshWhenPageIsComplete() {
-    return document.getElementById("refresh-seconds").value == 0;
 }
 
 //Visual logic

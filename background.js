@@ -16,6 +16,11 @@ browser.runtime.onMessage.addListener((message) => {
     messageToPage("reload");
   }
 
+  if(message.action === "waitSecondsWhenCompleteToRefresh") {
+    RefreshWhenPageIsCompleteInSeconds(message.seconds);
+    messageToPage("reload");
+  }
+
 
   //old escenarios - to delete - only for information purposes
   if (message.type === "refresh") {
@@ -56,6 +61,9 @@ function stopRefresh() {
     switch(listener) {
       case "refreshWhenPageIsComplete":
         browser.webNavigation.onCompleted.removeListener(sendRefreshWhenPageIsCompleteMessage);
+        break; 
+      case "RefreshWhenPageIsCompleteInSeconds":
+        browser.webNavigation.onCompleted.removeListener(sendRefreshWhenPageIsCompleteInSecondsMessage);
         break;
       default:
         console.error("No listener found.");
@@ -65,6 +73,8 @@ function stopRefresh() {
 
 function cleanTabInfo() {
   localStorage.removeItem("tabIdToRefresh");
+  localStorage.removeItem("secondsToRefresh");
+  localStorage.removeItem("waitingForRefresh");
 }
 
 function RefreshWhenPageIsComplete() {
@@ -76,6 +86,26 @@ function sendRefreshWhenPageIsCompleteMessage() {
   browser.tabs.query({active: true, currentWindow: true}, () => {
     browser.tabs.sendMessage(Number(localStorage.getItem("tabIdToRefresh")), {type: "refreshWhenPageIsComplete"});
   });
+}
+
+function RefreshWhenPageIsCompleteInSeconds(seconds) {
+  localStorage.setItem("secondsToRefresh", seconds);
+  browser.webNavigation.onCompleted.addListener(sendRefreshWhenPageIsCompleteInSecondsMessage);
+  addToListenersList("RefreshWhenPageIsCompleteInSeconds");
+}
+//TODO: dont wait for DOM to execute(recursive approach)
+//TODO: clearTimeout in clear function
+function sendRefreshWhenPageIsCompleteInSecondsMessage() {
+  let miliseconds = Number(localStorage.getItem("secondsToRefresh")) * 1000;
+  if(localStorage.getItem("waitingForRefresh") == null) {
+    localStorage.setItem("waitingForRefresh", true)
+    setTimeout(() => {
+      browser.tabs.query({active: true, currentWindow: true}, () => {
+        browser.tabs.sendMessage(Number(localStorage.getItem("tabIdToRefresh")), {type: "refreshWhenPageIsCompleteInSeconds"});
+      });
+      localStorage.removeItem("waitingForRefresh");
+    }, miliseconds);
+  }
 }
 
 function addToListenersList(listener) {

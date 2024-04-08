@@ -5,6 +5,8 @@ browser.runtime.onMessage.addListener((message) => {
         location.reload();
     } else if(message.type === "reload") {
         location.reload();
+    } else if(message.type === "refreshWhenPageIsCompleteInSeconds") {
+        location.reload();
     }
 
   //old escenarios - to delete - only for information purposes
@@ -106,11 +108,4 @@ function sendSpecificContent() {
     }
 
     return JSON.stringify(specificContentInfo);
-}
-
-function refreshPage() {
-    document.addEventListener("DOMContentLoaded", (e) => {
-        alert("pasa por aquí1358")
-    });
-    location.reload();
 }
