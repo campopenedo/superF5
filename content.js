@@ -7,6 +7,8 @@ browser.runtime.onMessage.addListener((message) => {
         location.reload();
     } else if(message.type === "refreshWhenPageIsCompleteInSeconds") {
         location.reload();
+    } else if(message.type === "refreshInSeconds") {
+        location.reload();
     }
 
   //old escenarios - to delete - only for information purposes

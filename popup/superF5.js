@@ -21,7 +21,12 @@ function refreshingOptions() {
     if(secondsToRefresh == 0) {
         browser.runtime.sendMessage({action: "refreshWhenPageIsComplete"});
     } else if (secondsToRefresh != 0) {
-        browser.runtime.sendMessage({action: "waitSecondsWhenCompleteToRefresh", seconds: secondsToRefresh});
+        let dontWaitDOM = document.getElementById("dont-wait-dom").checked;
+        if(dontWaitDOM) {
+            browser.runtime.sendMessage({action: "dontWaitDOMWithSeconds", seconds: secondsToRefresh});
+        } else {
+            browser.runtime.sendMessage({action: "waitSecondsWhenCompleteToRefresh", seconds: secondsToRefresh});
+        }
     }
 }
 
