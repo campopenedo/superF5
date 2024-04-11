@@ -62,9 +62,10 @@ browser.runtime.onMessage.addListener((message) => {
 });
 
 function stopRefresh() {
+  if(localStorage.getItem("refreshListenerList") == null) return;
+
   let listeners = localStorage.getItem("refreshListenerList").split(",");
   listeners.forEach((listener) => {
-    console.log(listener);
     switch(listener) {
       case "refreshWhenPageIsComplete":
         browser.webNavigation.onCompleted.removeListener(sendRefreshWhenPageIsCompleteMessage);
@@ -79,15 +80,13 @@ function stopRefresh() {
         console.error("No listener found: " + listener);
     }
   });
-  console.info("All listeners removed.");
 }
 
 function cleanTabInfo() {
-  //TODO: If (existlistener) remove(existlistener)
-  localStorage.removeItem("tabIdToRefresh");
-  localStorage.removeItem("secondsToRefresh");
-  localStorage.removeItem("waitingForRefresh");
-  localStorage.removeItem("refreshListenerList");
+  if(localStorage.getItem("tabIdToRefresh") != null) localStorage.removeItem("tabIdToRefresh");
+  if(localStorage.getItem("secondsToRefresh") != null) localStorage.removeItem("secondsToRefresh");
+  if(localStorage.getItem("waitingForRefresh") != null) localStorage.removeItem("waitingForRefresh");
+  if(localStorage.getItem("refreshListenerList") != null) localStorage.removeItem("refreshListenerList");
 }
 
 function RefreshWhenPageIsComplete() {
@@ -96,9 +95,7 @@ function RefreshWhenPageIsComplete() {
 }
 
 function sendRefreshWhenPageIsCompleteMessage() {
-  browser.tabs.query({active: true, currentWindow: true}, () => {
-    browser.tabs.sendMessage(Number(localStorage.getItem("tabIdToRefresh")), {type: "refreshWhenPageIsComplete"});
-  });
+  messageToPage("refreshWhenPageIsComplete");
 }
 
 function RefreshWhenPageIsCompleteInSeconds(seconds) {
@@ -114,20 +111,16 @@ function refreshInSeconds(seconds) {
 }
 
 function sendRefreshWhenPageIsCompleteInSecondsMessage(tab) {
-  if(tab.frameId == 0) {
-    if(localStorage.getItem("waitingForRefresh") == null) {
-      localStorage.setItem("waitingForRefresh", true);
-      let miliseconds = Number(localStorage.getItem("secondsToRefresh")) * 1000;
-      let timer = setTimeout(() => {
-        if(localStorage.getItem("tabIdToRefresh") !== null) {
-          browser.tabs.query({active: true, currentWindow: true}, () => {
-            browser.tabs.sendMessage(Number(localStorage.getItem("tabIdToRefresh")), {type: "refreshWhenPageIsCompleteInSeconds"});
-          });
-        }
-        localStorage.removeItem("waitingForRefresh");
-        clearTimeout(timer);
-      }, miliseconds);
-    }
+  if(tab.frameId == 0 && localStorage.getItem("waitingForRefresh") == null) {
+    localStorage.setItem("waitingForRefresh", true);
+    let miliseconds = Number(localStorage.getItem("secondsToRefresh")) * 1000;
+    let timer = setTimeout(() => {
+      if(localStorage.getItem("tabIdToRefresh") !== null) {
+        messageToPage("refreshWhenPageIsCompleteInSeconds");
+      }
+      localStorage.removeItem("waitingForRefresh");
+      clearTimeout(timer);
+    }, miliseconds);
   }
 }
 
@@ -138,9 +131,7 @@ function sendRefreshInSecondsMessage(tab) {
         let miliseconds = Number(localStorage.getItem("secondsToRefresh")) * 1000;
         let timer = setTimeout(() => {
           if(localStorage.getItem("tabIdToRefresh") !== null) {
-            browser.tabs.query({active: true, currentWindow: true}, () => {
-              browser.tabs.sendMessage(Number(localStorage.getItem("tabIdToRefresh")), {type: "refreshInSeconds"});
-            });
+            messageToPage("refreshInSeconds");
           }
           localStorage.removeItem("waitingForRefresh");
           clearTimeout(timer);
