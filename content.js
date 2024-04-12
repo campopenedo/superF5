@@ -1,13 +1,7 @@
 let sendedPartOfWeb;
 
 browser.runtime.onMessage.addListener((message) => {
-    if (message.type === "refreshWhenPageIsComplete") {
-        location.reload();
-    } else if(message.type === "reload") {
-        location.reload();
-    } else if(message.type === "refreshWhenPageIsCompleteInSeconds") {
-        location.reload();
-    } else if(message.type === "refreshInSeconds") {
+    if (message.type === "reload") {
         location.reload();
     }
 

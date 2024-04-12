@@ -1,3 +1,5 @@
+//Send messages to background.js
+//TODO: stop refreshing if the web changes, and set an optional alarm to it
 document.getElementById("start-refreshing").addEventListener("click", (event) => {
     event.preventDefault();
     refreshingOptions();
@@ -7,13 +9,13 @@ document.getElementById("stop-refreshing").addEventListener("click", (event) => 
     event.preventDefault();
     sendStopAndClean();
 });
-
 window.addEventListener("unload", stopOptions);
 window.addEventListener("load", stopOptions);
 
-document.getElementById("refresh-seconds").addEventListener("click", toggleButtonsDisponibility);
+//Visual logic
+document.getElementById("refresh-seconds").addEventListener("click", toggleButtonsWhenSecondsChange);
+document.getElementById("custom-refresh").querySelectorAll("input").forEach((input) => input.addEventListener("click", toggleAlarm));
 
-//Send messages to background.js
 function refreshingOptions() {
     let secondsToRefresh = document.getElementById("refresh-seconds").value;
     browser.runtime.sendMessage({action: "getTabInfo"});
@@ -39,15 +41,24 @@ function sendStopAndClean() {
     browser.runtime.sendMessage({action: "stopAndClean"});
 }
 
-//Visual logic
-function toggleButtonsDisponibility() {
+function toggleButtonsWhenSecondsChange() {
     if(document.getElementById("refresh-seconds").value == 0) {
         document.getElementById("stop-refresh-any-changes").disabled = true;
         document.getElementById("stop-refresh-specific-changes").disabled = true;
-        document.getElementById("alarm").disabled = true;        
+        document.getElementById("alarm").disabled = true;
+        document.getElementById("dont-wait-dom").disabled = true;   
     } else {
         document.getElementById("stop-refresh-any-changes").disabled = false;
         document.getElementById("stop-refresh-specific-changes").disabled = false;
-        document.getElementById("alarm").disabled = false;   
+        document.getElementById("alarm").disabled = false;
+        document.getElementById("dont-wait-dom").disabled = false; 
+    }
+}
+
+function toggleAlarm() {
+    if(document.getElementById("stop-refresh-any-changes").checked || document.getElementById("stop-refresh-specific-changes").checked) {
+        document.getElementById("alarm").disabled = false;
+    } else {
+        document.getElementById("alarm").disabled = true;
     }
 }
