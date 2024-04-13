@@ -11,10 +11,13 @@ document.getElementById("stop-refreshing").addEventListener("click", (event) => 
 });
 window.addEventListener("unload", stopOptions);
 window.addEventListener("load", stopOptions);
+document.getElementById("stop-refresh-any-changes").addEventListener("click", storeBody);
 
 //Visual logic
 document.getElementById("refresh-seconds").addEventListener("click", toggleButtonsWhenSecondsChange);
-document.getElementById("custom-refresh").querySelectorAll("input").forEach((input) => input.addEventListener("click", toggleAlarm));
+document.getElementById("stop-refresh-any-changes").addEventListener("click", toggleButtonsOnChangesInWebOptions);
+document.getElementById("stop-refresh-specific-changes").addEventListener("click", toggleButtonsOnChangesInWebOptions);
+document.getElementById("dont-wait-dom").addEventListener("click", toggleButtonsOnDontWaitDOM);
 
 function refreshingOptions() {
     let secondsToRefresh = document.getElementById("refresh-seconds").value;
@@ -55,10 +58,14 @@ function toggleButtonsWhenSecondsChange() {
     }
 }
 
-function toggleAlarm() {
-    if(document.getElementById("stop-refresh-any-changes").checked || document.getElementById("stop-refresh-specific-changes").checked) {
-        document.getElementById("alarm").disabled = false;
-    } else {
-        document.getElementById("alarm").disabled = true;
-    }
+function toggleButtonsOnChangesInWebOptions() {
+    document.getElementById("alarm").disabled = false;
+}
+
+function toggleButtonsOnDontWaitDOM() {
+    document.getElementById("alarm").disabled = true;
+}
+
+function storeBody() {
+    browser.runtime.sendMessage({action: "storeBody"});
 }

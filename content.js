@@ -5,6 +5,15 @@ browser.runtime.onMessage.addListener((message) => {
         location.reload();
     }
 
+    if(message.type === "storeBody") {
+        //browser.runtime.sendMessage({action: "storeBody", body: document.getElementsByTagName("body")[0].textContent});
+        localStorage.setItem("bodyInFirstRefresh", document.getElementsByTagName("body")[0].textContent);
+    }
+
+    if(message.type == "cleanRefreshTabInfo") {
+        cleanRefreshTabInfo();
+    }
+
   //old escenarios - to delete - only for information purposes
 
     if (message.type === "refresh") {
@@ -104,4 +113,8 @@ function sendSpecificContent() {
     }
 
     return JSON.stringify(specificContentInfo);
+}
+
+function cleanRefreshTabInfo() {
+    if(localStorage.getItem("bodyInFirstRefresh") != null) localStorage.removeItem("bodyInFirstRefresh");
 }

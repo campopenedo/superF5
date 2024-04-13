@@ -6,6 +6,10 @@ browser.runtime.onMessage.addListener((message) => {
     });
   }
 
+  if(message.action === "storeBody") {
+    messageToPage("storeBody");
+  }
+
   if(message.action === "stopAndClean") {
     stopRefresh();
     cleanTabInfo();
@@ -86,6 +90,8 @@ function cleanTabInfo() {
   if(localStorage.getItem("secondsToRefresh") != null) localStorage.removeItem("secondsToRefresh");
   if(localStorage.getItem("waitingForRefresh") != null) localStorage.removeItem("waitingForRefresh");
   if(localStorage.getItem("refreshListenerList") != null) localStorage.removeItem("refreshListenerList");
+
+  messageToPage("cleanRefreshTabInfo");
 }
 
 function RefreshWhenPageIsComplete() {
