@@ -1,14 +1,15 @@
 browser.runtime.onMessage.addListener((message) => {
   
-  if(message.action === "getTabInfo") {
-    browser.tabs.query({active: true, currentWindow: true}, (tabs) => {
-      localStorage.setItem("tabIdToRefresh", tabs[0].id);
-    });
+  if(message.action === "storeBody") {
+    messageToPage("getFirstBody");
   }
 
   if(message.action === "stopAndClean") {
     stopRefresh();
     cleanTabInfo();
+    if(message.information != null) {
+      //send message to superF5 with an alert
+    }
   }
 
   if (message.action === "refreshWhenPageIsComplete") {
@@ -24,6 +25,13 @@ browser.runtime.onMessage.addListener((message) => {
   if(message.action === "dontWaitDOMWithSeconds") {
     refreshInSeconds(message.seconds);
     messageToPage("reload");
+  }
+
+  if(message.action === "stopRefreshInAnyChanges") {
+    CompareBodyAndRefreshInSeconds(message.seconds);
+    messageToPage("compareFullBody");
+
+    //TODO:If they are different, stop refreshing and send a notification. the localstorage remove when is different, try something to put into work if the user press another time the start refresh without presseing again the option
   }
 
 
@@ -75,6 +83,9 @@ function stopRefresh() {
       case "sendRefreshInSecondsMessage":
         browser.webNavigation.onBeforeNavigate.removeListener(sendRefreshInSecondsMessage);
         break;
+      case "CompareBodyAndRefreshInSeconds":
+        browser.webNavigation.onCompleted.removeListener(CompareBodyAndRefreshInSecondsMessage);
+        break;
       default:
         console.error("No listener found: " + listener);
     }
@@ -86,6 +97,7 @@ function cleanTabInfo() {
   if(localStorage.getItem("secondsToRefresh") != null) localStorage.removeItem("secondsToRefresh");
   if(localStorage.getItem("waitingForRefresh") != null) localStorage.removeItem("waitingForRefresh");
   if(localStorage.getItem("refreshListenerList") != null) localStorage.removeItem("refreshListenerList");
+  if(localStorage.getItem("bodyInFirstRefresh") != null) localStorage.removeItem("bodyInFirstRefresh");
 }
 
 function RefreshWhenPageIsComplete() {
@@ -101,6 +113,18 @@ function RefreshWhenPageIsCompleteInSeconds(seconds) {
   localStorage.setItem("secondsToRefresh", seconds);
   browser.webNavigation.onCompleted.addListener(sendRefreshWhenPageIsCompleteInSecondsMessage);
   addToListenersList("RefreshWhenPageIsCompleteInSeconds");
+}
+
+function CompareBodyAndRefreshInSeconds(seconds) {
+  localStorage.setItem("secondsToRefresh", seconds);
+  browser.webNavigation.onCompleted.addListener(CompareBodyAndRefreshInSecondsMessage);
+  addToListenersList("CompareBodyAndRefreshInSeconds");
+}
+
+function CompareBodyAndRefreshInSecondsMessage(tab) {
+  if(tab.frameId == 0 && localStorage.getItem("waitingForRefresh") == null) {
+    messageToPageInMiliseconds("compareFullBody", Number(localStorage.getItem("secondsToRefresh")) * 1000);
+  }
 }
 
 function sendRefreshWhenPageIsCompleteInSecondsMessage(tab) {
@@ -130,7 +154,7 @@ function sendRefreshInSecondsMessage(tab) {
 }
 
 function addToListenersList(listener) {
-  let newLocalStorage = localStorage.getItem("refreshListenerList") == null ? localStorage.setItem("refreshListenerList", listener)
+  let newLocalStorage = localStorage.getItem("refreshListenerList") == null ? listener
                         : localStorage.getItem("refreshListenerList") + "," + listener;
   localStorage.setItem("refreshListenerList", newLocalStorage);
 }

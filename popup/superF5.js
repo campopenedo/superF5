@@ -1,5 +1,4 @@
 //Send messages to background.js
-//TODO: stop refreshing if the web changes, and set an optional alarm to it
 document.getElementById("start-refreshing").addEventListener("click", (event) => {
     event.preventDefault();
     refreshingOptions();
@@ -11,20 +10,24 @@ document.getElementById("stop-refreshing").addEventListener("click", (event) => 
 });
 window.addEventListener("unload", stopOptions);
 window.addEventListener("load", stopOptions);
+document.getElementById("stop-refresh-any-changes").addEventListener("click", storeBody);
 
 //Visual logic
 document.getElementById("refresh-seconds").addEventListener("click", toggleButtonsWhenSecondsChange);
-document.getElementById("custom-refresh").querySelectorAll("input").forEach((input) => input.addEventListener("click", toggleAlarm));
+document.getElementById("stop-refresh-any-changes").addEventListener("click", toggleButtonsOnChangesInWebOptions);
+document.getElementById("stop-refresh-specific-changes").addEventListener("click", toggleButtonsOnChangesInWebOptions);
+document.getElementById("dont-wait-dom").addEventListener("click", toggleButtonsOnDontWaitDOM);
 
 function refreshingOptions() {
     let secondsToRefresh = document.getElementById("refresh-seconds").value;
-    browser.runtime.sendMessage({action: "getTabInfo"});
-
     if(secondsToRefresh == 0) {
         browser.runtime.sendMessage({action: "refreshWhenPageIsComplete"});
     } else if (secondsToRefresh != 0) {
-        let dontWaitDOM = document.getElementById("dont-wait-dom").checked;
-        if(dontWaitDOM) {
+        let dontWaitDOM = document.getElementById("dont-wait-dom").checked,
+            stopRefreshInAnyChanges = document.getElementById("stop-refresh-any-changes").checked;
+        if(stopRefreshInAnyChanges) {
+            browser.runtime.sendMessage({action: "stopRefreshInAnyChanges", seconds: secondsToRefresh});
+        } else if(dontWaitDOM) {
             browser.runtime.sendMessage({action: "dontWaitDOMWithSeconds", seconds: secondsToRefresh});
         } else {
             browser.runtime.sendMessage({action: "waitSecondsWhenCompleteToRefresh", seconds: secondsToRefresh});
@@ -55,10 +58,14 @@ function toggleButtonsWhenSecondsChange() {
     }
 }
 
-function toggleAlarm() {
-    if(document.getElementById("stop-refresh-any-changes").checked || document.getElementById("stop-refresh-specific-changes").checked) {
-        document.getElementById("alarm").disabled = false;
-    } else {
-        document.getElementById("alarm").disabled = true;
-    }
+function toggleButtonsOnChangesInWebOptions() {
+    document.getElementById("alarm").disabled = false;
+}
+
+function toggleButtonsOnDontWaitDOM() {
+    document.getElementById("alarm").disabled = true;
+}
+
+function storeBody() {
+    browser.runtime.sendMessage({action: "storeBody"});
 }

@@ -5,6 +5,19 @@ browser.runtime.onMessage.addListener((message) => {
         location.reload();
     }
 
+    if(message.type === "getFirstBody") {
+        localStorage.setItem("firstFullBody", document.getElementsByTagName("body")[0].textContent);
+    }
+
+    if(message.type == "compareFullBody") {
+        if(localStorage.getItem("firstFullBody") != document.getElementsByTagName("body")[0].textContent) {
+            browser.runtime.sendMessage({action: "stopAndClean", information: "Body has change"});
+            cleanInfo();
+        } else {
+            location.reload();
+        }
+    }
+
   //old escenarios - to delete - only for information purposes
 
     if (message.type === "refresh") {
@@ -104,4 +117,8 @@ function sendSpecificContent() {
     }
 
     return JSON.stringify(specificContentInfo);
+}
+
+function cleanInfo() {
+    if(localStorage.getItem("firstFullBody") != null) localStorage.removeItem("firstFullBody");
 }
