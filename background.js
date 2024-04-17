@@ -7,9 +7,6 @@ browser.runtime.onMessage.addListener((message) => {
   if(message.action === "stopAndClean") {
     stopRefresh();
     cleanTabInfo();
-    if(message.information != null) {
-      //send message to superF5 with an alert
-    }
   }
 
   if (message.action === "refreshWhenPageIsComplete") {
@@ -28,6 +25,7 @@ browser.runtime.onMessage.addListener((message) => {
   }
 
   if(message.action === "stopRefreshInAnyChanges") {
+    //TODO: if is the second time and the user doesnt press the button, the extension doesnt get another time the full body. Get full body the next time
     CompareBodyAndRefreshInSeconds(message.seconds);
     messageToPage("compareFullBody");
 

@@ -11,8 +11,8 @@ browser.runtime.onMessage.addListener((message) => {
 
     if(message.type == "compareFullBody") {
         if(localStorage.getItem("firstFullBody") != document.getElementsByTagName("body")[0].textContent) {
-            browser.runtime.sendMessage({action: "stopAndClean", information: "Body has change"});
             cleanInfo();
+            browser.runtime.sendMessage({action: "stopAndClean", information: "Body has change"});
         } else {
             location.reload();
         }

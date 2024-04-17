@@ -1,3 +1,9 @@
+browser.runtime.onMessage.addListener((message) => {
+    if(message.action == "stopAndClean" && message.information != null) {
+        alert(message.information);
+    }
+});
+
 //Send messages to background.js
 document.getElementById("start-refreshing").addEventListener("click", (event) => {
     event.preventDefault();
