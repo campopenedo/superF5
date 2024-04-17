@@ -5,13 +5,17 @@ browser.runtime.onMessage.addListener((message) => {
         location.reload();
     }
 
-    if(message.type === "storeBody") {
-        //browser.runtime.sendMessage({action: "storeBody", body: document.getElementsByTagName("body")[0].textContent});
-        localStorage.setItem("bodyInFirstRefresh", document.getElementsByTagName("body")[0].textContent);
+    if(message.type === "getFirstBody") {
+        localStorage.setItem("firstFullBody", document.getElementsByTagName("body")[0].textContent);
     }
 
-    if(message.type == "cleanRefreshTabInfo") {
-        cleanRefreshTabInfo();
+    if(message.type == "compareFullBody") {
+        if(localStorage.getItem("firstFullBody") != document.getElementsByTagName("body")[0].textContent) {
+            cleanInfo();
+            browser.runtime.sendMessage({action: "stopAndClean", information: "Body has change"});
+        } else {
+            location.reload();
+        }
     }
 
   //old escenarios - to delete - only for information purposes
@@ -115,6 +119,7 @@ function sendSpecificContent() {
     return JSON.stringify(specificContentInfo);
 }
 
-function cleanRefreshTabInfo() {
-    if(localStorage.getItem("bodyInFirstRefresh") != null) localStorage.removeItem("bodyInFirstRefresh");
+
+function cleanInfo() {
+    if(localStorage.getItem("firstFullBody") != null) localStorage.removeItem("firstFullBody");
 }

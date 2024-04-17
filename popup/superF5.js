@@ -1,5 +1,10 @@
+browser.runtime.onMessage.addListener((message) => {
+    if(message.action == "stopAndClean" && message.information != null) {
+        alert(message.information);
+    }
+});
+
 //Send messages to background.js
-//TODO: stop refreshing if the web changes, and set an optional alarm to it
 document.getElementById("start-refreshing").addEventListener("click", (event) => {
     event.preventDefault();
     refreshingOptions();
@@ -21,13 +26,14 @@ document.getElementById("dont-wait-dom").addEventListener("click", toggleButtons
 
 function refreshingOptions() {
     let secondsToRefresh = document.getElementById("refresh-seconds").value;
-    browser.runtime.sendMessage({action: "getTabInfo"});
-
     if(secondsToRefresh == 0) {
         browser.runtime.sendMessage({action: "refreshWhenPageIsComplete"});
     } else if (secondsToRefresh != 0) {
-        let dontWaitDOM = document.getElementById("dont-wait-dom").checked;
-        if(dontWaitDOM) {
+        let dontWaitDOM = document.getElementById("dont-wait-dom").checked,
+            stopRefreshInAnyChanges = document.getElementById("stop-refresh-any-changes").checked;
+        if(stopRefreshInAnyChanges) {
+            browser.runtime.sendMessage({action: "stopRefreshInAnyChanges", seconds: secondsToRefresh});
+        } else if(dontWaitDOM) {
             browser.runtime.sendMessage({action: "dontWaitDOMWithSeconds", seconds: secondsToRefresh});
         } else {
             browser.runtime.sendMessage({action: "waitSecondsWhenCompleteToRefresh", seconds: secondsToRefresh});
