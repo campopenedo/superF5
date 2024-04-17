@@ -119,6 +119,7 @@ function sendSpecificContent() {
     return JSON.stringify(specificContentInfo);
 }
 
+
 function cleanInfo() {
     if(localStorage.getItem("firstFullBody") != null) localStorage.removeItem("firstFullBody");
 }

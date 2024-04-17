@@ -4,6 +4,10 @@ browser.runtime.onMessage.addListener((message) => {
     messageToPage("getFirstBody");
   }
 
+  if(message.action === "storeBody") {
+    messageToPage("storeBody");
+  }
+
   if(message.action === "stopAndClean") {
     stopRefresh();
     cleanTabInfo();
