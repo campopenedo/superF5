@@ -1,5 +1,6 @@
 browser.runtime.onMessage.addListener((message) => {
-    if(message.action == "stopAndClean" && message.information != null) {
+    if(message.action == "alertToPopup" && message.information != null) {
+        //TODO: Personalizated alert with a design like the rest of the extension
         alert(message.information);
     }
 });
@@ -16,7 +17,6 @@ document.getElementById("stop-refreshing").addEventListener("click", (event) => 
 });
 window.addEventListener("unload", stopOptions);
 window.addEventListener("load", stopOptions);
-document.getElementById("stop-refresh-any-changes").addEventListener("click", storeBody);
 
 //Visual logic
 document.getElementById("refresh-seconds").addEventListener("click", toggleButtonsWhenSecondsChange);

@@ -1,13 +1,5 @@
 browser.runtime.onMessage.addListener((message) => {
-  
-  if(message.action === "storeBody") {
-    messageToPage("getFirstBody");
-  }
-
-  if(message.action === "storeBody") {
-    messageToPage("storeBody");
-  }
-
+ 
   if(message.action === "stopAndClean") {
     stopRefresh();
     cleanTabInfo();
@@ -29,11 +21,19 @@ browser.runtime.onMessage.addListener((message) => {
   }
 
   if(message.action === "stopRefreshInAnyChanges") {
-    //TODO: if is the second time and the user doesnt press the button, the extension doesnt get another time the full body. Get full body the next time
+    if(localStorage.getItem("firstFullBody") == null) {
+      messageToPage("getBodyToCompare");
+    }
     CompareBodyAndRefreshInSeconds(message.seconds);
-    messageToPage("compareFullBody");
+    messageToPage("reload");
+  }
 
-    //TODO:If they are different, stop refreshing and send a notification. the localstorage remove when is different, try something to put into work if the user press another time the start refresh without presseing again the option
+  if(message.action == "bodySentToCompare") {
+    if(localStorage.getItem("firstFullBody") == null) {
+      localStorage.setItem("firstFullBody", message.body);
+    } else {
+      compareActualAndFirstBody(message.body);
+    }
   }
 
 
@@ -124,8 +124,8 @@ function CompareBodyAndRefreshInSeconds(seconds) {
 }
 
 function CompareBodyAndRefreshInSecondsMessage(tab) {
-  if(tab.frameId == 0 && localStorage.getItem("waitingForRefresh") == null) {
-    messageToPageInMiliseconds("compareFullBody", Number(localStorage.getItem("secondsToRefresh")) * 1000);
+  if(tab.frameId == 0 && localStorage.getItem("waitingForRefresh") == null && localStorage.getItem("firstFullBody") != null) {
+    messageToPageInMiliseconds("getBodyToCompare", Number(localStorage.getItem("secondsToRefresh")) * 1000);
   }
 }
 
@@ -166,4 +166,14 @@ function messageToPage(message) {
     if(localStorage.getItem("tabIdToRefresh") === null) localStorage.setItem("tabIdToRefresh", tabs[0].id)
     browser.tabs.sendMessage(Number(localStorage.getItem("tabIdToRefresh")), {type: message});
   });
+}
+
+function compareActualAndFirstBody(actualBody) {
+  if(localStorage.getItem("firstFullBody") != actualBody) {
+    stopRefresh();
+    cleanTabInfo();
+    browser.runtime.sendMessage({action: "alertToPopup", information: "Body has change"});
+  } else {
+      location.reload();
+  }
 }
