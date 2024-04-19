@@ -102,13 +102,13 @@ form {
 }
 
 
-#start-refreshing, #stop-refreshing {
+#start-refreshing, #stop-refreshing, .notification-button {
     border: 2px solid black;
     border-radius: 10px;
     font-size: 15px;
     font-weight: 600;
     background-color: var(--blueBackground);
-    color: var(--white)
+    color: var(--white);
 }
 
 #start-refreshing:hover, #stop-refreshing:hover {
@@ -128,7 +128,6 @@ form {
     color: var(--warning);
     font-weight: 600;
 }
-
 @keyframes smoothAppear {
     from {
         opacity: 0%;
