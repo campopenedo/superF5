@@ -102,7 +102,7 @@ form {
 }
 
 
-#start-refreshing, #stop-refreshing, .notification-button {
+#start-refreshing, #stop-refreshing {
     border: 2px solid black;
     border-radius: 10px;
     font-size: 15px;
@@ -128,6 +128,48 @@ form {
     color: var(--warning);
     font-weight: 600;
 }
+
+#notification {
+    position:absolute;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.5);
+    top: 0px;
+    left: 0px;
+}
+
+#notification-message {
+    position:relative;
+    width:fit-content;
+    height:fit-content;
+    padding:1%;
+    background-color:white;
+    border-radius:10px;
+    top:40%;
+    left:38%;
+    border:2px solid black;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+    opacity:1;
+}
+
+#notification-ok {
+    border: 2px solid black;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    background-color: var(--blueBackground);
+    color:#fff;
+    padding: 3px 11px;
+}
+
+#notification-ok:hover {
+    background-color: var(--darkBlueBackground);
+    cursor: pointer;
+}
+
 @keyframes smoothAppear {
     from {
         opacity: 0%;

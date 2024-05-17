@@ -1,7 +1,7 @@
 browser.runtime.onMessage.addListener((message) => {
     if(message.action == "alertToPopup" && message.information != null) {
         //TODO: Personalizated alert with a design like the rest of the extension
-        insertPopup(message.information);
+        showPopup(message.information);
     }
 });
 
@@ -23,6 +23,7 @@ document.getElementById("refresh-seconds").addEventListener("click", toggleButto
 document.getElementById("stop-refresh-any-changes").addEventListener("click", toggleButtonsOnChangesInWebOptions);
 document.getElementById("stop-refresh-specific-changes").addEventListener("click", toggleButtonsOnChangesInWebOptions);
 document.getElementById("dont-wait-dom").addEventListener("click", toggleButtonsOnDontWaitDOM);
+document.getElementById("notification-ok").addEventListener("click", closeAndHidePopup);
 
 function refreshingOptions() {
     let secondsToRefresh = document.getElementById("refresh-seconds").value;
@@ -76,30 +77,21 @@ function storeBody() {
     browser.runtime.sendMessage({action: "storeBody"});
 }
 
-function insertPopup(message) {
-    let fade = document.createElement("div"),
-    alert = document.createElement("div"),
-    Okbutton = document.createElement("button");
-
-    fade.style = "position:absolute;width:100%;height:100%;background:rgba(0,0,0,0.5);";
-    fade.id = "fade-notification";
-    //TODO: calculate the place of the alert comparing the size of the windows. See if we can do reactive button
-    alert.style = "position:relative;width:fit-content;height:fit-content;padding:1%;background-color:white;border-radius:10px;top:40%;left:38%;border:2px solid black;display:flex;justify-content:center;align-items:center;flex-direction:column;opacity:1;";
-    Okbutton.style = "border: 2px solid black;border-radius: 10px;font-size: 15px;font-weight: 600;background-color: #0071FF;color:#fff;"
-
-
-    fade.appendChild(alert);
+function showPopup(message) {
+    let popup = document.getElementById("notification-message"),
+    okButton = document.getElementById("notification-ok");
     
-    Okbutton.appendChild(document.createTextNode("Ok"));
-    alert.appendChild(document.createTextNode(message));
+    var messageNode = document.createTextNode(message);
+    var wrapper = document.createElement("span");
+    wrapper.id = "notification-message-text"
+    wrapper.appendChild(messageNode);
 
-    alert.appendChild(Okbutton);
-    fade.appendChild(alert);
+    popup.insertBefore(wrapper, okButton);
 
-    Okbutton.onclick = (e) => {
-        let fade = document.getElementById("fade-notification");
-        fade.parentNode.removeChild(fade);
-    };
+    popup.parentElement.classList.remove("hidden");
+}
 
-    document.body.insertBefore(fade, document.body.firstChild);
+function closeAndHidePopup() {
+    document.getElementById("notification-message-text").remove();
+    document.getElementById("notification").classList.add("hidden");
 }
